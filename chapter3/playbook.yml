@@ -2,9 +2,36 @@
 - hosts: all
   become: true
   tasks:
-    - name: Ensure chrony is installed.
-      yum: name=chrony state=present
-    - name: Ensure chrony is runninig.
-      service: name=chronyd state=started enabled=yes
+    - name: install Apache.
+      yum:
+        name:
+          - httpd
+          - httpd-devel
+        state: present
 
+    # - name: copy config files.
+    #   copy:
+    #     src: "{{ item.src }}"
+    #     dest: "{{ item.dest }}"
+    #     owner: root
+    #     group: root
+    #     mode: 644
+    #   with items:
+    #     - src: httpd.conf
+    #       dest: /etc/httpd/conf/httpd.conf  
+    #     - src: httpd-vhosts.conf
+    #       dest: /etc/httpd/conf/httpd-vhosts.coonf
+   
+    - name: copy config files.
+      copy:
+        owner: root
+        group: root
+        mode: 644
+        src: httpd.conf
+        dest: /etc/httpd/conf/httpd.conf  
 
+    - name: make sure the apache service enabled and started.
+      service:
+        name: httpd
+        state: started
+        enabled: true      
